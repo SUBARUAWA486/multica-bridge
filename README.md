@@ -163,3 +163,11 @@ This is a pre-release source snapshot. `private: true` intentionally prevents
 accidental npm publication. No hosted service, public repository, or npm package
 is created by these scripts. Confirm publication rights and review the remaining
 items in [compliance](docs/compliance.md) before publishing.
+
+This bridge is built on [Multica](https://github.com/multica-ai/multica), using
+its HTTP API as an independently maintained local integration. MIT permits
+commercial use of this bridge, including modification and redistribution with
+its license notice retained. It does not grant rights to Multica or Codex.
+Multica's [own license](https://github.com/multica-ai/multica/blob/main/LICENSE)
+includes additional conditions for hosting, embedding, and attribution.
+See the [publishing and license policy](docs/compliance.md#publishing-policy).

@@ -45,3 +45,43 @@ rights. This repository does not ship or modify the Codex application.
    channels, and CI before inviting outside users. No remote publication or npm
    publication is performed by the preparation scripts. `private: true` intentionally
    blocks accidental npm publication.
+
+## Publishing policy
+
+Keep the unmodified **MIT License** for this small, independent local utility.
+Commercial use, private modifications, and redistribution are allowed while
+retaining its copyright and permission notice. Do not append a non-commercial
+restriction: it would contradict the intended MIT grant and fail the
+[Open Source Definition, section 6](https://opensource.org/osd).
+The license is a permission grant, not a compliance certificate or an upstream
+commercial license. It does not promise maintenance or compatibility.
+
+The distribution is bridge source only: no Multica/Codex binaries, enterprise
+code, hosted service, credential profiles, transcripts, or private recovery
+archives. Multica is installed and licensed separately. User-facing documentation
+and NOTICE acknowledge that this bridge is built on Multica and link upstream.
+No Multica UI or branding is modified or redistributed here.
+
+The [Multica License](https://github.com/multica-ai/multica/blob/main/LICENSE)
+contains Apache-2.0 **and additional conditions**, not plain Apache-2.0. Part I
+restricts third-party hosting (including free public instances) and commercial
+embedding of Multica source without a producer commercial license; internal use
+within one organization is permitted under that clause. It also imposes UI
+branding and non-UI attribution conditions. Publishing source is not itself a
+hosted service; redistribution of Multica or derivative code still carries the
+whole upstream license and applicable notices. This bridge's MIT grant does not
+change those terms. Confirm permission with upstream before offering such a
+service or bundling their implementation if applicability is uncertain.
+
+Upstream contribution terms apply to submissions to Multica; they are not copied
+into this independent project's contribution policy. Contributions here remain
+MIT with preserved third-party notices. No CLA, mandatory commercial agreement,
+or custom non-commercial restriction is introduced.
+
+For an initial public release, keep the scope experimental, use the existing
+Node 24 CI, and publish only a reviewed Git snapshot. The release check requires
+tracked worktree files to match the staged candidate and rejects package files
+outside that checked index. Configure an actual maintainer/security contact in
+the chosen public repository before release; repository selection and ownership
+confirmation remain maintainer decisions. A public Git source release is enough;
+keep npm publication disabled for now.

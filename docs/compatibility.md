@@ -2,7 +2,7 @@
 
 ## Runtime
 
-Node.js 24 or later is required for ESM, built-in SQLite, and abort-signal behavior.
+Node.js 24 or later is required for ESM, built-in SQLite, abort-signal behavior, and source-backed JSON numbers used by redaction.
 There is no build step. The locked SDK is 1.32.1 and Zod is 4.6.7.
 
 ## Codex source format

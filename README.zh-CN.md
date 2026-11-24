@@ -41,3 +41,8 @@ Codex 的 SQLite/JSONL 和使用的 Multica 接口并非稳定兼容承诺；没
 `npm test` 使用合成记录和本机服务，不依赖个人配置。开发环境集成、生成依赖声明与公开文件检查见 [测试说明](docs/testing.md)。
 
 源码：[MIT](LICENSE)；第三方：[NOTICE](NOTICE)、[依赖许可证](THIRD_PARTY_NOTICES.md)。[贡献规范](CONTRIBUTING.md) 与 [合规记录](docs/compliance.md) 说明来源、权利与发布边界。当前保留 `private: true` 防止误发布 npm；本次整理不会自动建立公共仓库或发布服务。公开前仍需确认有权发布，包括可能涉及的公司、客户和保密义务。
+
+本工具基于 [Multica](https://github.com/multica-ai/multica) 的 HTTP API 构建，独立维护。
+MIT 允许本工具商用、修改和再分发，要求保留版权与许可声明；不要求使用者公开其修改。
+这不包含 Multica 或 Codex 的授权。Multica 的[自身许可](https://github.com/multica-ai/multica/blob/main/LICENSE)
+对托管、商业嵌入和署名另有条件，须分别遵守。具体方案见[发布与许可政策](docs/compliance.md#publishing-policy)。

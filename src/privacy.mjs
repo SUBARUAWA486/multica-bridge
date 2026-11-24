@@ -22,7 +22,10 @@ export function publicText(value, c = {}, resources = []) {
   // Preserve ordinary output formatting; only reserialize JSON when a value changed.
   if (/^\s*[\[{]/.test(text)) {
     try {
-      const parsed = JSON.parse(text), filtered = publicValue(parsed, c, resources);
+      // Native source-backed numbers avoid rounding IDs or normalizing exponents.
+      const parsed = JSON.parse(text, (_key, value, context) =>
+        typeof value === 'number' ? JSON.rawJSON(context.source) : value);
+      const filtered = publicValue(parsed, c, resources);
       return JSON.stringify(parsed) !== JSON.stringify(filtered) ? JSON.stringify(filtered) : text;
     } catch { /* Mixed tool output uses the text rules below. */ }
   }
@@ -44,6 +47,7 @@ export function publicText(value, c = {}, resources = []) {
 export function publicValue(value, c = {}, resources = [], depth = 0) {
   if (depth > 32) return '[REDACTED_DEPTH_LIMIT]';
   if (typeof value === 'string') return publicText(value, c, resources);
+  if (JSON.isRawJSON(value)) return value;
   if (Array.isArray(value)) return value.map(v => publicValue(v, c, resources, depth + 1));
   if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([k, v]) => [publicText(k, c, resources), sensitiveKey.test(k.replace(/[_-]/g, '')) ? '[REDACTED]' : publicValue(v, c, resources, depth + 1)]));
   return value;

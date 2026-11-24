@@ -12,3 +12,6 @@ See licenses/GITLEAKS.txt and docs/provenance.md.
 
 Third-party dependency notices are in THIRD_PARTY_NOTICES.md.
 Multica itself, Codex, and the Node.js runtime are not bundled with this source.
+
+Built on Multica via its HTTP API: https://github.com/multica-ai/multica
+Multica is developed by Index Labs (Hong Kong) Limited and separately licensed.

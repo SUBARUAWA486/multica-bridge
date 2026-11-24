@@ -37,3 +37,13 @@ test('outbound guard filters business fields but preserves routing and concurren
   assert.equal(filtered.messages[0].input.apiToken, '[REDACTED]'); assert.equal(filtered.messages[0].output, '[REDACTED]');
   assert.equal(filtered.description.includes('new-value'), false); assert.equal(body.messages[0].output, 'known-login-token-value');
 });
+
+test('JSON redaction preserves large identifiers and original numeric literals', () => {
+  const input = '{"recordId":9223372036854775807,"values":[-9223372036854775809,1.2300,1e+400,-0],"password":"synthetic-secret","safe":"unchanged"}';
+  const expected = input.replace('synthetic-secret', '[REDACTED]');
+  assert.equal(publicText(input), expected);
+  assert.equal(publicText(expected), expected);
+  const nested = JSON.stringify({ output: input });
+  assert.equal(JSON.parse(publicText(nested)).output, expected);
+  assert.equal(publicText('{ "n": 9223372036854775807 }'), '{ "n": 9223372036854775807 }');
+});

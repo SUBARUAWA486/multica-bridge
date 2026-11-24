@@ -50,5 +50,7 @@ npm pack --dry-run --json
 ```
 
 The release check is a lightweight hygiene check, not a legal opinion or complete
-secret scanner. It checks tracked files and package inclusion rules; it does not
+secret scanner. It reads staged Git blobs, rejects tracked worktree/index differences and package
+files outside that checked index, and checks package inclusion rules. Stage all
+intended edits before running it; unstaged edits must be resolved first. It does not
 scan unrelated local stores or upload anything.
