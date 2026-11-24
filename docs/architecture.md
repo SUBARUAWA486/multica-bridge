@@ -25,8 +25,17 @@ to deployment configuration rather than the generic model workflow.
 
 ## Data path
 
-Selected Codex JSONL → new-record adapter → window filter → durable pending queue
-→ outbound content redaction → configured Multica API.
+```mermaid
+flowchart LR
+    Source[Selected Codex JSONL] --> Adapter[Record adapter]
+    Adapter --> Window[Sync window filter]
+    Window --> Queue[Durable pending queue]
+    Queue --> Privacy[Outbound redaction]
+    Privacy --> API[Configured Multica API]
+```
+
+Task metadata operations use the API client and its outbound redaction directly;
+they do not pass through the transcript queue.
 
 Only explicit bindings are read. The source index is metadata-only and read-only;
 the selected transcript is never rewritten. Reasoning, injected environment,
@@ -52,6 +61,29 @@ With configured application following, quit closes the network gate. Reopen
 preserves accepted pre-close queue data while skipping newly produced closed-time
 records. Manual pause remains paused. A bridge-process restart preserves runtime
 identity, bindings, operation records and pending state.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Agent as Codex agent
+    participant Bridge as Local bridge
+    participant Remote as Multica
+    User->>Agent: Pause sync
+    Agent->>Bridge: pause_sync
+    Note over Bridge: Persist fence, settle in-flight work,<br/>drop unsent content and confirm pause
+    Bridge-->>Agent: confirmed
+    Agent-->>User: Paused
+    Note over User,Bridge: Private discussion stays local
+    User->>Agent: Resume sync
+    Agent->>Bridge: resume_sync
+    Note over Bridge: Validate target and establish a new boundary
+    Bridge-->>Agent: confirmed
+    Bridge->>Remote: Subsequent eligible output, same task and Chat
+```
+
+The diagram shows successful operations. A pending or failed result requires
+inspection; it is not a pause confirmation. Resume does not backfill the private
+interval, and pause cannot retract writes already sent.
 
 ## Tasks and privacy
 

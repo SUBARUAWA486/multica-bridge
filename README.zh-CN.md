@@ -2,47 +2,56 @@
 
 [English](README.md)
 
-独立、非官方的本地 Codex → Multica 同步桥。直接在当前 Codex 聊天工作，按需将后续可见输出同步到 Multica 任务，不调用第二个模型、不另建执行聊天。
+**在 Codex 里工作，在 Multica 上协作。**
 
-本项目不代表 OpenAI 或 Index Labs，不包含 Codex、Multica 界面、服务端或企业版实现。源码按 MIT 提供；上游产品仍适用各自协议。代码来源与限制见 [来源说明](docs/provenance.md) 和 [合规核验记录](docs/compliance.md)。
+一个基于 [Multica](https://github.com/multica-ai/multica) 的非官方本地小工具。
+Codex 承接人的表达与任务执行，Multica 保存团队共享的任务和进展。
+Agent 按简短约定管理任务，优先用 MCP，未覆盖的操作通过已有登录调用接口。
 
-## 安装
-
-需要 Node.js 24+、本地 Codex 记录，以及具备相应接口权限的 Multica 部署。
-
-```sh
-npm ci
-cp config.example.json config.local.json
+```mermaid
+flowchart LR
+    User[人] <--> Codex[Codex：交流与执行]
+    Codex -->|任务操作：MCP 或 API| Multica[Multica：团队任务与进展]
+    Codex -->|选定的输出| Bridge[本地 Bridge]
+    Bridge -->|筛选并同步| Multica
 ```
 
-修改本机配置中的服务器 URL、工作区 UUID/slug、已有登录 profile 路径、Codex 目录与私有 `stateDir`，均按你的部署填写。凭据不写进 bridge 配置。`MULTICA_BRIDGE_CONFIG` 可指定仓库外配置，运行状态也应放在仓库外。示例不包含真实环境信息，默认不上传工具参数/结果。
+Bridge 负责可靠同步，不再调用另一个模型。需要时连接，私密讨论前暂停，
+随后恢复到原任务和 Chat，暂停期间的内容不补传。
+一个聊天绑定一个父任务；子任务划分范围，执行记录仍留在父任务 Chat。
 
-MCP stdio 命令为 `node`，参数为 `--disable-warning=ExperimentalWarning` 和 `/absolute/path/to/multica-bridge/src/mcp.mjs`；按需设置 `MULTICA_BRIDGE_CONFIG`。工具发现及 `get_workflow` 不需要登录，实际操作需要有效配置。CLI 也可用于启停、任务与同步控制，完整参数见英文 README。
+## 开始使用
 
-`clientPresence.enabled` 默认关闭；此时退出 Multica 不会停止 bridge 通信。要跟随应用退出，必须开启并填写当前机器实际的主进程绝对路径，不能误选 Electron helper。关闭窗口不等于退出应用。
+需要 **Node.js 24+**、本地 Codex 记录，以及已登录的 Multica。
+下载或克隆本仓库后，可以直接告诉 Agent：
 
-## 使用
+> 阅读 docs/setup.zh-CN.md，帮我在本机安装配置这个 Bridge。
+> 检查环境，复用已有 Multica 登录，不要输出凭据。
+> 配置 MCP 并验证连接，不要同步这段安装对话。
 
-- 创建任务：先建议并由你选择现有项目区标签；已明确选择不重复问。`projectLabelPrefix` 是可选的本机命名提示，不强制特定前缀。
-- 创建不代表同步。明确要求后调用 `connect_current`，`confirmed` 之后才上传；之前讨论不补传。
-- 单独发送停止指令：先 `pause_sync` 并等待 `confirmed`，再输出私密内容。已发送或在途内容不可撤回。
-- 明确恢复后 `resume_sync` 复用原任务和 Chat，不补传暂停内容。
-- 新任务默认人员负责人、低优先级和 `todo`；模型可自行设进行中或审核中，已完成及其他状态须用户明确要求。任务描述默认只写摘要，备注需用户要求或先确认模型拟补充的内容。
-- 一个聊天只绑定一个顶层任务。子任务用于明确范围、独立管理属性和状态，全部对话留在父任务 Chat，不启动平台 agent。相互独立的并行工作用不同 Codex 聊天。
+安装命令、MCP 配置和手工备用路径见[安装说明](docs/setup.zh-CN.md)。
+Bridge 不需要构建或部署服务端，Multica 单独运行。
 
-## 隐私和兼容性
+## 在当前聊天使用
 
-用户输入上传为“用户消息”，可见回复和启用的业务工具输出仍可能引用用户信息。常见凭据、私钥、连接串和本地路径在上传前尽力遮盖。邮箱和内网地址过滤是可选开关，默认关闭以免破坏链接；不能保证识别所有业务机密或编码后的秘密。服务器仍可保存和访问已收到的内容。详见 [安全边界](SECURITY.md)。
+- **“为这项工作创建 Multica 任务并开始同步。”** Agent 建议项目区标签，
+  由你选择后创建任务，再连接当前聊天。
+- **“暂停 Multica 同步。”** 单独发送，等确认暂停后，再继续私密讨论。
+- **“恢复 Multica 同步。”** 复用原任务和 Chat，不补传暂停内容。
 
-Codex 的 SQLite/JSONL 和使用的 Multica 接口并非稳定兼容承诺；没有声明支持全部客户端版本或所有云端/自托管部署。先用可丢弃的开发聊天验证，详见 [兼容说明](docs/compatibility.md)。创建结果未知时先对账，不盲目新建；API 已保存不代表页面已刷新。
+任务描述保持简短，默认低优先级、人员负责人。Agent 可以设为进行中或审核中，
+是否完成由你决定。已连接的 Codex 对话标题会加上 `M-`。
 
-## 开发与许可
+只同步明确连接的聊天。用户输入显示为“用户消息”，回复仍可能引用你的内容。
+上传内容可被所配置的服务器访问；脱敏是尽力处理。建议先用可丢弃任务验证，
+详细限制见[安全说明](SECURITY.md)和[兼容说明](docs/compatibility.md)。
 
-`npm test` 使用合成记录和本机服务，不依赖个人配置。开发环境集成、生成依赖声明与公开文件检查见 [测试说明](docs/testing.md)。
+## 更多
 
-源码：[MIT](LICENSE)；第三方：[NOTICE](NOTICE)、[依赖许可证](THIRD_PARTY_NOTICES.md)。[贡献规范](CONTRIBUTING.md) 与 [合规记录](docs/compliance.md) 说明来源、权利与发布边界。当前保留 `private: true` 防止误发布 npm；本次整理不会自动建立公共仓库或发布服务。公开前仍需确认有权发布，包括可能涉及的公司、客户和保密义务。
+- [工作原理](docs/architecture.md) · [中文 Agent 约定](AGENTS.zh-CN.md)
+- [测试](docs/testing.md) · [参与贡献](CONTRIBUTING.md)
+- [MIT](LICENSE)：允许商用，保留版权及许可声明即可。
+  Multica、Codex 仍适用各自条款。本项目与 OpenAI、Index Labs 无官方关联。
+  [第三方署名](NOTICE) · [来源](docs/provenance.md) · [许可核验](docs/compliance.md)
 
-本工具基于 [Multica](https://github.com/multica-ai/multica) 的 HTTP API 构建，独立维护。
-MIT 允许本工具商用、修改和再分发，要求保留版权与许可声明；不要求使用者公开其修改。
-这不包含 Multica 或 Codex 的授权。Multica 的[自身许可](https://github.com/multica-ai/multica/blob/main/LICENSE)
-对托管、商业嵌入和署名另有条件，须分别遵守。具体方案见[发布与许可政策](docs/compliance.md#publishing-policy)。
+当前为实验性源码版本，暂不发布 npm 包。

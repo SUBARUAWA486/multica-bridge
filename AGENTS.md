@@ -1,5 +1,7 @@
 # Multica Bridge
 
+[中文对照](AGENTS.zh-CN.md). Keep both instruction documents aligned; runtime workflow policy remains in workflow.mjs.
+
 Mirror explicitly selected Codex output through the public Multica API; never start another model or change Codex permissions. The current chat is the work and control entry. Task metadata needs only a short title and optional useful description, never a child-chat handoff template.
 
 Keep credentials in the existing login profile. Read the Codex index as metadata only; read transcripts only for explicitly selected bindings. No directory discovery, internal approval or subagent mirroring. Exclude injected context and bridge control payloads; replace user input with the fixed placeholder and redact outbound local paths and known secrets.

@@ -33,6 +33,7 @@
     "CONTRIBUTING.md",
     "SECURITY.md",
     "AGENTS.md",
+    "AGENTS.zh-CN.md",
     "config.example.json"
   ]
 }
