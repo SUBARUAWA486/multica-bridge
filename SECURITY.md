@@ -7,11 +7,10 @@ eligible visible output to your configured Multica server using your credentials
 ## Reporting
 
 Do not post credentials, transcript excerpts, private server addresses, or live
-workspace/task IDs in public issues. If this repository has GitHub private
-vulnerability reporting enabled, use its Security tab. Otherwise first request a
-private reporting channel from the maintainer without disclosing the vulnerability
-or private data. No private reporting service or response-time guarantee is
-currently provided.
+workspace/task IDs in public issues. Report vulnerabilities through [GitHub private vulnerability reporting](https://github.com/SUBARUAWA486/multica-bridge/security/advisories/new).
+Use this private channel for vulnerability details, not public issues. Do not
+include live credentials even in private reports. No response-time guarantee
+is provided.
 
 ## Operational boundaries
 

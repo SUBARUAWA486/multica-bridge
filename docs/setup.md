@@ -8,9 +8,11 @@ no build step and no bridge HTTP port to expose.
 ## 1. Prepare
 
 Download or clone this repository and open its directory in Codex. Check
-`node --version` is 24 or later, then run from the repository root:
+`node --version` is 24 or later, then run the following. Skip clone/cd if the repository is already open:
 
 ```sh
+git clone https://github.com/SUBARUAWA486/multica-bridge.git
+cd multica-bridge
 npm ci
 cp config.example.json config.local.json
 ```

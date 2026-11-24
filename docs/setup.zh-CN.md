@@ -8,9 +8,11 @@ Bridge 与 Codex 运行在同一台机器上，Multica 单独运行。
 ## 1. 准备环境
 
 下载或克隆仓库，在 Codex 中打开仓库目录。确认 `node --version` 为 24 或以上，
-然后在仓库根目录执行：
+首次安装执行以下命令；已下载或打开仓库时，跳过 clone 和 cd：
 
 ```sh
+git clone https://github.com/SUBARUAWA486/multica-bridge.git
+cd multica-bridge
 npm ci
 cp config.example.json config.local.json
 ```
