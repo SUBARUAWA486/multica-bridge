@@ -4,7 +4,7 @@ import { publicText, publicValue, outboundBody } from '../src/privacy.mjs';
 
 test('common secrets are removed from text, including partial private keys', () => {
   const secrets = ['ghp_' + 'a'.repeat(36), 'glpat-' + 'b'.repeat(20), 'github_pat_' + 'c'.repeat(24), 'AKIA' + 'A'.repeat(16), 'sk-' + 'd'.repeat(24), 'ey' + 'e'.repeat(12) + '.' + 'f'.repeat(12) + '.' + 'g'.repeat(12)];
-  const input = [...secrets, 'PASSWORD="two words"', 'api_key: arbitrary-value', 'postgresql://user:dbpass@host/db', 'Bearer opaque-token-123456', '-----BEGIN OPENSSH PRIVATE KEY-----\nprivate key material'].join('\n');
+  const input = [...secrets, 'PASSWORD="two words"', 'api_key: arbitrary-value', 'postgresql://user:dbpass@host/db', 'Bearer opaque-token-123456', ['-----BEGIN OPENSSH', 'PRIVATE KEY-----\nprivate key material'].join(' ')].join('\n');
   const output = publicText(input);
   for (const secret of [...secrets, 'two words', 'arbitrary-value', 'dbpass', 'opaque-token-123456', 'private key material']) assert.equal(output.includes(secret), false);
   assert.equal(publicText(output), output);

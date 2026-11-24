@@ -18,10 +18,17 @@ const rules = [
   [/\bey[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/g, '[REDACTED_JWT]'],
   // private-key: also suppress incomplete PEM blocks in partial tool output.
   [/-----BEGIN [A-Z0-9_ -]{0,100}PRIVATE KEY(?: BLOCK)?-----[\s\S]*?(?:-----END [A-Z0-9_ -]{0,100}PRIVATE KEY(?: BLOCK)?-----|$)/g, '[REDACTED_PRIVATE_KEY]'],
+  // Multica authentication token prefixes are protocol-format identifiers only.
+  [/\b(?:mul_|mat_|mdt_)[A-Za-z0-9_-]{10,}\b/g, '[REDACTED_TOKEN]'],
 ];
 
 export function redactTokenFormats(text) {
   for (const [pattern, replacement] of rules) text = text.replace(pattern, replacement);
-  // Multica authentication token prefixes are protocol-format identifiers only.
-  return text.replace(/\b(?:mul_|mat_|mdt_)[A-Za-z0-9_-]{10,}\b/g, '[REDACTED_TOKEN]');
+  return text;
+}
+
+// Release scanning shares the format rules, but never prints matched values.
+export function secretFormatMatches(text) {
+  return rules.flatMap(([pattern]) => [...text.matchAll(new RegExp(pattern.source, pattern.flags))]
+    .map(match => ({ value: match[0], index: match.index })));
 }

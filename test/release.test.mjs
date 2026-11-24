@@ -11,6 +11,9 @@ function fixture(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bridge-release-test-'));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
   fs.mkdirSync(path.join(dir, 'scripts'));
+  fs.mkdirSync(path.join(dir, 'src'));
+  fs.copyFileSync(path.join(root, 'src/secret-patterns.mjs'), path.join(dir, 'src/secret-patterns.mjs'));
+  fs.copyFileSync(path.join(root, 'scripts/scan-secrets.mjs'), path.join(dir, 'scripts/scan-secrets.mjs'));
   fs.copyFileSync(path.join(root, 'scripts/check-release.mjs'), path.join(dir, 'scripts/check-release.mjs'));
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify({ private: true, license: 'MIT' }));
   fs.writeFileSync(path.join(dir, 'README.md'), 'Public example\n');

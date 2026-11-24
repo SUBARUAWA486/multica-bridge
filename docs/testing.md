@@ -54,3 +54,26 @@ secret scanner. It reads staged Git blobs, rejects tracked worktree/index differ
 files outside that checked index, and checks package inclusion rules. Stage all
 intended edits before running it; unstaged edits must be resolved first. It does not
 scan unrelated local stores or upload anything.
+
+## Secret scanning before publication
+
+`npm run check:release` checks every staged file for the shared token-format rules,
+including tests and license files, then scans commit messages and unique file
+versions across all locally reachable branches and tags. CI fetches full history;
+shallow clones are rejected. Run `npm run scan:history` for the history check alone.
+Fetch any remote refs intended for publication first; absent refs, unreachable
+objects, reflogs and private recovery archives are outside this scope.
+
+Rules include Multica tokens, AWS access/session keys and explicitly named secret-access-key values, GitHub/GitLab, OpenAI,
+Anthropic, Slack, Stripe, Google API keys, JWTs and private-key blocks. This is a
+best-effort format scan, not the complete Gitleaks engine or a guarantee against
+opaque, encoded, split or unknown credentials. No real login profile is read.
+Failures report file/commit locations without printing matched values.
+
+Synthetic credential exemptions in `scripts/scan-secrets.mjs` bind an exact path
+to a SHA-256 of the entire matched value. There is no test-directory credential
+bypass. Review each exemption; prefer constructing synthetic strings in tests.
+Historical incomplete PEM fixtures have exact exemptions so no history rewrite
+is needed. Paths/private addresses in synthetic tests keep their existing separate
+presentation-data exceptions. Never exempt a real credential: revoke it and decide
+how to clean affected history before publication.

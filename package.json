@@ -11,6 +11,7 @@
     "start": "node --disable-warning=ExperimentalWarning src/cli.mjs",
     "mcp": "node --disable-warning=ExperimentalWarning src/mcp.mjs",
     "licenses": "node scripts/dependency-notices.mjs",
+    "scan:history": "node scripts/scan-secrets.mjs",
     "check:release": "node scripts/check-release.mjs"
   },
   "dependencies": {
