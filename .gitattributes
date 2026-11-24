@@ -1,0 +1,4 @@
+* text=auto eol=lf
+# Private deployment files must never appear in exported source archives.
+config.local.json export-ignore
+node_modules/ export-ignore

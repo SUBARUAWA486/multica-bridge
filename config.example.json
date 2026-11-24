@@ -1,0 +1,23 @@
+{
+  "serverUrl": "https://multica.example.com",
+  "workspaceId": "00000000-0000-4000-8000-000000000001",
+  "workspaceSlug": "example-workspace",
+  "profilePath": "/absolute/path/to/multica/profile/config.json",
+  "codexHome": "/absolute/path/to/.codex",
+  "stateDir": "/absolute/path/to/private/bridge-state",
+  "autoDiscover": false,
+  "privacy": {
+    "redactInternalAddresses": false,
+    "redactEmails": false
+  },
+  "toolPayloads": false,
+  "pollMs": 500,
+  "retryLimit": 10,
+  "clientPresence": {
+    "enabled": false,
+    "executables": [],
+    "resumePolicy": "skip"
+  },
+  "localWorkspaceRoot": "/absolute/path/to/workspace",
+  "projectLabelPrefix": ""
+}

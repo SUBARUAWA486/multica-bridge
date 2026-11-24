@@ -1,0 +1,38 @@
+{
+  "name": "multica-bridge",
+  "version": "0.6.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.mjs",
+    "start": "node --disable-warning=ExperimentalWarning src/cli.mjs",
+    "mcp": "node --disable-warning=ExperimentalWarning src/mcp.mjs",
+    "licenses": "node scripts/dependency-notices.mjs",
+    "check:release": "node scripts/check-release.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "zod": "4.6.7"
+  },
+  "description": "Unofficial local Codex-to-Multica task and conversation mirror with explicit sync controls.",
+  "license": "MIT",
+  "files": [
+    "src/",
+    "scripts/",
+    "test/",
+    "docs/",
+    "licenses/",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE",
+    "NOTICE",
+    "THIRD_PARTY_NOTICES.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "AGENTS.md",
+    "config.example.json"
+  ]
+}

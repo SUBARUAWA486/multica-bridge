@@ -1,0 +1,14 @@
+Multica Bridge
+Copyright (c) 2026 Multica Bridge contributors
+
+This is an independent, unofficial integration for Codex and Multica.
+It is not produced, endorsed, or supported by OpenAI or Index Labs.
+Product names are used only to identify compatible software; no trademark
+rights or permission to redistribute those products are granted here.
+
+The token-format rule subset in src/secret-patterns.mjs is adapted from
+Gitleaks, copyright (c) 2019 Zachary Rice, under the MIT License.
+See licenses/GITLEAKS.txt and docs/provenance.md.
+
+Third-party dependency notices are in THIRD_PARTY_NOTICES.md.
+Multica itself, Codex, and the Node.js runtime are not bundled with this source.

@@ -1,0 +1,40 @@
+// Lightweight public-snapshot hygiene checks; never reads private login profiles.
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const files = execFileSync('git', ['ls-files', '--cached', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean);
+if (!files.length) throw new Error('Stage the intended public files before running the release check.');
+const failures = [];
+const privateFile = /(?:^|\/)(?:config(?:\.[^/]+)?\.local\.json|\.env(?:\..*)?|node_modules|state|runtime|local|outputs|Temp|artifacts|\.git)(?:\/|$)|\.(?:sqlite\w*|db|jsonl|bundle|tgz|tar\.gz|pem|key)$/i;
+const rawKey = /\b(?:ghp_|github_pat_|glpat-|sk-)[A-Za-z0-9_-]{24,}\b|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/;
+for (const name of files) {
+  if (privateFile.test(name) && name !== '.env.example') { failures.push(`${name}: private/runtime file`); continue; }
+  const file = path.join(root, name);
+  if (fs.lstatSync(file).isSymbolicLink()) { failures.push(`${name}: symbolic link requires manual review`); continue; }
+  const text = fs.readFileSync(file, 'utf8');
+  // Test fixtures intentionally contain synthetic paths/addresses. License texts
+  // retain their original copyright holders, email addresses and attribution.
+  const fixture = name.startsWith('test/');
+  const notice = name === 'THIRD_PARTY_NOTICES.md' || name.startsWith('licenses/');
+  if (!fixture && !notice && /\/(?:Users|home)\/[A-Za-z0-9_.-]+\//.test(text)) failures.push(`${name}: absolute user-directory path`);
+  if (!fixture && !notice && /\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\b/.test(text)) failures.push(`${name}: literal private-network address`);
+  if (!fixture && !notice && rawKey.test(text)) failures.push(`${name}: possible credential/private key`);
+}
+for (const name of ['LICENSE', 'NOTICE', 'THIRD_PARTY_NOTICES.md', 'SECURITY.md', 'CONTRIBUTING.md', 'docs/provenance.md', 'docs/compliance.md']) if (!files.includes(name)) failures.push(`${name}: missing required public document`);
+const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json')));
+if (pkg.license !== 'MIT' || pkg.private !== true) failures.push('package.json: review license / accidental npm-publication guard');
+execFileSync(process.execPath, ['scripts/dependency-notices.mjs', '--check'], { cwd: root, stdio: 'inherit' });
+const cache = fs.mkdtempSync(path.join(os.tmpdir(), 'bridge-pack-check-'));
+let packed;
+try {
+  const args = ['pack', '--dry-run', '--ignore-scripts', '--offline', '--json', '--cache', cache];
+  const command = process.env.npm_execpath ? process.execPath : 'npm';
+  const result = execFileSync(command, process.env.npm_execpath ? [process.env.npm_execpath, ...args] : args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  packed = JSON.parse(result)[0].files.map(f => f.path);
+  for (const name of packed) if (privateFile.test(name)) failures.push(`${name}: private file included in package`);
+} finally { fs.rmSync(cache, { recursive: true, force: true }); }
+if (failures.length) throw new Error('Public snapshot checks failed:\n' + failures.join('\n'));
+console.log(JSON.stringify({ trackedFiles: files.length, packageFiles: packed.length, license: pkg.license, privateFileChecks: 'passed', legalCertification: false }));
