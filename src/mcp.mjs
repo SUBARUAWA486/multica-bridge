@@ -23,7 +23,7 @@ const statusSource = z.enum(['automatic', 'user_requested']).default('automatic'
 const controls = { thread_id: z.string().uuid(), request_id: z.string().uuid().optional(), expected_generation: z.number().int().nonnegative().optional() };
 tool('get_status', '查看 bridge 目标、连接及绑定状态，不返回凭据或任务交接提示。', {}, c => status(c), true);
 tool('get_workflow', '简短说明当前聊天同步的用法及边界，无需每轮重复读取。', {}, () => workflow, true, false);
-tool('get_task_options', '按需查询当前工作区可用状态、项目、标签或成员。负责人使用 user_id；项目工作流可能限制状态，最终以创建接口校验为准。不返回邮箱或凭据。', { kind: z.enum(['statuses', 'projects', 'labels', 'members']) }, (c, a) => taskOptions(c, a.kind), true);
+tool('get_task_options', '按需查询当前工作区可用状态、项目、标签或成员。负责人使用 user_id；项目工作流可能限制状态，最终以创建接口校验为准。创建时一起推荐所属产品/项目区与任务性质标签；项目标签提示不替代完整列表。不返回邮箱或凭据。', { kind: z.enum(['statuses', 'projects', 'labels', 'members']) }, (c, a) => taskOptions(c, a.kind), true);
 tool('prepare_task', '创建或关联任务，不启动同步。parent_key 创建子任务；issue_id 关联已有任务。相同 key 返回原任务、不覆盖属性；返回初始化属性及警告。创建前遵守 get_workflow 的标签选择与描述规则。', {
   key: z.string().regex(/^[a-zA-Z0-9_-]{1,80}$/), parent_key: z.string().regex(/^[a-zA-Z0-9_-]{1,80}$/).optional().describe('创建子任务时指定已确认的顶层父任务 key；子任务不绑定 Chat，不启动 agent。'), issue_id: z.string().uuid().optional(), issue: issue.optional(),
   resources, status_source: statusSource, profile_key: z.string().optional(), publish_results: z.boolean().default(false)

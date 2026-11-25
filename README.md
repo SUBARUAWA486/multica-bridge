@@ -38,7 +38,7 @@ the bridge; Multica runs separately.
 ## Use it in your existing chat
 
 - **“Create a Multica task for this work and start syncing.”** The agent recommends
-  a project label for you to choose, creates the task, and connects this chat.
+  a product/project label and a task-nature label for you to confirm, creates the task, and connects this chat.
 - **“Pause Multica sync.”** Send this separately; wait for confirmed pause before
   continuing with private discussion.
 - **“Resume Multica sync.”** Reuses the original task and Chat; paused content stays local.
